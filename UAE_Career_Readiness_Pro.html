@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAE Career Readiness Analyser 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#07080F;--card:#0D0E1A;--card2:#111220;
+--b1:#1C1D30;--b2:#252640;--b3:#303055;
+--gold:#C9A84C;--gold2:#E8C96E;--gold3:#F5E0A0;
+--green:#22C55E;--green2:#4ADE80;
+--blue:#3B82F6;--blue2:#60A5FA;
+--red:#EF4444;--amber:#F59E0B;--amber2:#FCD34D;
+--purple:#8B5CF6;--purple2:#A78BFA;
+--pink:#EC4899;--teal:#14B8A6;
+--text:#F1F5F9;--t2:#94A3B8;--t3:#475569;--t4:#1E293B;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;min-height:100vh}
+
+/* ANIMATED BACKGROUND */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation:drift 20s infinite alternate}
+.orb1{width:600px;height:600px;background:var(--gold);top:-200px;right:-200px;animation-delay:0s}
+.orb2{width:500px;height:500px;background:var(--blue);bottom:-200px;left:-200px;animation-delay:-7s}
+.orb3{width:400px;height:400px;background:var(--purple);top:40%;left:40%;animation-delay:-14s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.1)}}
+
+/* LAYOUT */
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.content{flex:1}
+
+/* HERO */
+.hero{padding:60px 40px 48px;text-align:center;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,rgba(201,168,76,0.04) 0%,transparent 100%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:24px;padding:6px 16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);margin-bottom:20px;letter-spacing:0.08em}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.hero h1{font-family:'Instrument Serif',serif;font-size:52px;font-weight:400;line-height:1.05;margin-bottom:16px;letter-spacing:-0.02em}
+.hero h1 .gold{background:linear-gradient(135deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 em{font-style:italic}
+.hero-sub{font-size:16px;color:var(--t2);max-width:640px;margin:0 auto 28px;line-height:1.7}
+.stats-row{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t2)}
+.stat-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.stat-icon.g{background:rgba(34,197,94,0.15)}
+.stat-icon.b{background:rgba(59,130,246,0.15)}
+.stat-icon.gold{background:rgba(201,168,76,0.15)}
+.stat-icon.p{background:rgba(139,92,246,0.15)}
+
+/* ROLE SELECTOR */
+.role-section{padding:40px;max-width:1000px;margin:0 auto}
+.rs-title{font-family:'Instrument Serif',serif;font-size:28px;text-align:center;margin-bottom:8px}
+.rs-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:32px}
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.role-card{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:20px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.role-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;border-radius:16px}
+.role-card:hover{border-color:var(--b2);transform:translateY(-2px)}
+.role-card.selected{border-width:2px;transform:translateY(-2px)}
+.role-card.selected::before{opacity:1}
+.role-icon{font-size:28px;margin-bottom:10px;display:block}
+.role-name{font-size:14px;font-weight:500;margin-bottom:4px}
+.role-desc{font-size:11px;color:var(--t3);line-height:1.4}
+.role-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:4px;margin-top:8px;display:inline-block}
+
+/* Role colors */
+.r-analytics .role-card{border-color:rgba(201,168,76,0.3)}
+.r-analytics .role-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.r-analytics .role-card.selected::before{background:radial-gradient(circle at top left,rgba(201,168,76,0.08),transparent)}
+.r-analytics .role-badge{background:rgba(201,168,76,0.15);color:var(--gold2)}
+
+.r-software .role-card.selected{border-color:var(--blue);background:rgba(59,130,246,0.06)}
+.r-software .role-badge{background:rgba(59,130,246,0.15);color:var(--blue2)}
+
+.r-finance .role-card.selected{border-color:var(--green);background:rgba(34,197,94,0.06)}
+.r-finance .role-badge{background:rgba(34,197,94,0.15);color:var(--green2)}
+
+.r-business .role-card.selected{border-color:var(--purple);background:rgba(139,92,246,0.06)}
+.r-business .role-badge{background:rgba(139,92,246,0.15);color:var(--purple2)}
+
+.r-marketing .role-card.selected{border-color:var(--pink);background:rgba(236,72,153,0.06)}
+.r-marketing .role-badge{background:rgba(236,72,153,0.15);color:#F9A8D4}
+
+.r-hr .role-card.selected{border-color:var(--teal);background:rgba(20,184,166,0.06)}
+.r-hr .role-badge{background:rgba(20,184,166,0.15);color:#5EEAD4}
+
+.r-operations .role-card.selected{border-color:var(--amber);background:rgba(245,158,11,0.06)}
+.r-operations .role-badge{background:rgba(245,158,11,0.15);color:var(--amber2)}
+
+.r-sales .role-card.selected{border-color:var(--red);background:rgba(239,68,68,0.06)}
+.r-sales .role-badge{background:rgba(239,68,68,0.15);color:#FCA5A5}
+
+.r-consulting .role-card.selected{border-color:#A78BFA;background:rgba(167,139,250,0.06)}
+.r-consulting .role-badge{background:rgba(167,139,250,0.15);color:#C4B5FD}
+
+.r-engineering .role-card.selected{border-color:#06B6D4;background:rgba(6,182,212,0.06)}
+.r-engineering .role-badge{background:rgba(6,182,212,0.15);color:#67E8F9}
+
+/* PROGRESS BAR */
+.progress-section{padding:0 40px;max-width:800px;margin:0 auto 32px}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-title{font-size:13px;font-weight:500;color:var(--t2)}
+.progress-steps{font-family:'DM Mono',monospace;font-size:12px;color:var(--t3)}
+.progress-track{height:4px;background:var(--b1);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width 0.4s ease;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.step-dots{display:flex;justify-content:space-between;margin-top:8px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--b1);transition:all 0.3s}
+.step-dot.active{background:var(--gold);transform:scale(1.4)}
+.step-dot.done{background:var(--green)}
+
+/* QUIZ */
+.quiz-section{padding:0 40px;max-width:800px;margin:0 auto}
+.q-header{margin-bottom:24px}
+.q-category{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.q-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:8px}
+.q-sub{font-size:13px;color:var(--t2);line-height:1.6}
+
+.question-block{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:22px;margin-bottom:16px}
+.q-text{font-size:14px;font-weight:500;margin-bottom:6px;line-height:1.5}
+.q-hint{font-size:12px;color:var(--t3);margin-bottom:14px;font-family:'DM Mono',monospace}
+.opts{display:grid;gap:10px}
+.opts.cols2{grid-template-columns:1fr 1fr}
+.opt{background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:13px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px}
+.opt:hover{border-color:var(--b2)}
+.opt.sel{border-color:var(--gold);background:rgba(201,168,76,0.07)}
+.opt-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--b3);flex-shrink:0;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.opt.sel .opt-radio{border-color:var(--gold);background:var(--gold)}
+.opt.sel .opt-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#000}
+.opt-content{}
+.opt-label{font-size:13px;font-weight:500;color:var(--text)}
+.opt-detail{font-size:11px;color:var(--t3);margin-top:2px}
+.opt-pts{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold2);margin-top:3px}
+
+.skills-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.skill-toggle{background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.2s;position:relative}
+.skill-toggle:hover{border-color:var(--b2)}
+.skill-toggle.on{border-color:var(--green);background:rgba(34,197,94,0.07)}
+.st-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--b3);display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s}
+.skill-toggle.on .st-check{background:var(--green);border-color:var(--green);color:#000}
+.st-name{font-size:13px;font-weight:500;padding-right:20px;margin-bottom:3px}
+.st-pts{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)}
+.skill-toggle.on .st-pts{color:var(--green2)}
+
+/* NAV */
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-bottom:48px}
+.btn-back{background:transparent;border:1px solid var(--b2);color:var(--t2);border-radius:10px;padding:11px 22px;font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.btn-back:hover{border-color:var(--b3);color:var(--text)}
+.btn-next{background:linear-gradient(135deg,var(--gold),#D4A547);color:#0A0800;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px}
+.btn-next:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-calc{background:linear-gradient(135deg,var(--gold),#D4A547);color:#0A0800;border:none;border-radius:12px;padding:16px 40px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;width:100%;margin-top:24px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-calc:hover{opacity:0.9;transform:translateY(-1px)}
+
+/* RESULTS */
+.results-wrap{max-width:900px;margin:0 auto;padding:0 40px 60px}
+
+.score-hero{text-align:center;padding:48px 0 32px;position:relative}
+.score-ring-outer{position:relative;width:200px;height:200px;margin:0 auto 24px}
+.score-ring-outer svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--b1);stroke-width:14}
+.ring-fill{fill:none;stroke-width:14;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1)}
+.ring-glow{fill:none;stroke-width:20;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;opacity:0.2;transition:stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1)}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-family:'Instrument Serif',serif;font-size:56px;line-height:1}
+.score-label-sm{font-family:'DM Mono',monospace;font-size:12px;color:var(--t3)}
+.score-title{font-family:'Instrument Serif',serif;font-size:30px;margin-bottom:8px}
+.score-subtitle{font-size:14px;color:var(--t2);max-width:500px;margin:0 auto;line-height:1.6}
+
+.result-role-badge{display:inline-flex;align-items:center;gap:6px;border-radius:24px;padding:6px 16px;font-size:13px;margin-bottom:16px;border:1px solid}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:28px 0}
+.metric{background:var(--card);border:1px solid var(--b1);border-radius:14px;padding:18px;text-align:center;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.metric.m-gold::before{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.metric.m-green::before{background:linear-gradient(90deg,var(--green),var(--green2))}
+.metric.m-blue::before{background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.metric.m-purple::before{background:linear-gradient(90deg,var(--purple),var(--purple2))}
+.metric.m-amber::before{background:linear-gradient(90deg,var(--amber),var(--amber2))}
+.m-icon{font-size:20px;margin-bottom:6px}
+.m-val{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:3px}
+.m-label{font-size:11px;color:var(--t3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em}
+
+/* BREAKDOWN */
+.breakdown-card{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:24px;margin-bottom:16px}
+.bd-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.bd-name{font-size:14px;font-weight:500}
+.bd-score{font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;border-radius:6px}
+.bd-score.high{background:rgba(34,197,94,0.12);color:var(--green2)}
+.bd-score.mid{background:rgba(245,158,11,0.12);color:var(--amber2)}
+.bd-score.low{background:rgba(239,68,68,0.12);color:#FCA5A5}
+.bd-bar-track{height:8px;background:var(--b1);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.bd-bar-fill{height:100%;border-radius:4px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1)}
+.bd-feedback{font-size:12px;color:var(--t2);line-height:1.6;padding:10px 14px;background:var(--bg);border-radius:8px;border-left:2px solid var(--b2)}
+
+/* SALARY */
+.salary-panel{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:24px;margin-bottom:24px;overflow:hidden;position:relative}
+.salary-panel::after{content:'AED';position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-family:'Instrument Serif',serif;font-size:120px;color:rgba(201,168,76,0.04);pointer-events:none}
+.sp-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:16px}
+.sal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.sal-box{background:var(--bg);border-radius:12px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.sal-tier{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.sal-tier.con{color:var(--amber2)}
+.sal-tier.real{color:var(--gold2)}
+.sal-tier.ref{color:var(--green2)}
+.sal-aed{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:4px}
+.sal-aed.con{color:var(--amber2)}
+.sal-aed.real{color:var(--gold2)}
+.sal-aed.ref{color:var(--green2)}
+.sal-inr{font-size:11px;color:var(--t3)}
+.sal-note{font-size:12px;color:var(--t3);margin-top:14px;line-height:1.6;padding-top:12px;border-top:1px solid var(--b1)}
+
+/* COMPANIES */
+.companies-panel{margin-bottom:24px}
+.panel-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:14px}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.comp-card{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:16px;transition:border-color 0.2s}
+.comp-card:hover{border-color:var(--b2)}
+.comp-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.comp-sector{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px}
+.comp-roles{font-size:12px;color:var(--t2);margin-bottom:6px;line-height:1.4}
+.comp-tag{font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;display:inline-block}
+.ct-green{background:rgba(34,197,94,0.1);color:var(--green2)}
+.ct-blue{background:rgba(59,130,246,0.1);color:var(--blue2)}
+.ct-amber{background:rgba(245,158,11,0.1);color:var(--amber2)}
+.ct-gold{background:rgba(201,168,76,0.1);color:var(--gold2)}
+
+/* ROADMAP */
+.roadmap-panel{margin-bottom:24px}
+.roadmap-item{display:flex;gap:14px;margin-bottom:14px;background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:16px;transition:border-color 0.2s}
+.roadmap-item:hover{border-color:var(--b2)}
+.ri-num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#D4A547);color:#000;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;margin-top:1px}
+.ri-body{}
+.ri-action{font-size:13px;font-weight:600;margin-bottom:4px}
+.ri-detail{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:5px}
+.ri-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold2);display:flex;align-items:center;gap:4px}
+
+/* SHARE */
+.share-panel{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(59,130,246,0.06));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:28px;text-align:center;margin-bottom:24px}
+.share-title{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:8px}
+.share-sub{font-size:13px;color:var(--t2);margin-bottom:20px}
+.share-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.sbtn{border-radius:10px;padding:11px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;font-family:'DM Sans',sans-serif}
+.sbtn-gold{background:linear-gradient(135deg,var(--gold),#D4A547);color:#0A0800}
+.sbtn-gold:hover{opacity:0.9}
+.sbtn-li{background:#0A66C2;color:#fff}
+.sbtn-li:hover{background:#004182}
+.sbtn-outline{background:transparent;border:1px solid var(--b2);color:var(--t2)}
+.sbtn-outline:hover{border-color:var(--b3);color:var(--text)}
+.score-share-text{font-family:'DM Mono',monospace;font-size:22px;color:var(--gold2);margin-bottom:4px}
+.score-share-sub{font-size:12px;color:var(--t3);margin-bottom:16px}
+
+/* MISC */
+.disclaimer{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:var(--t3);line-height:1.7}
+.disclaimer strong{color:var(--t2)}
+
+.footer{background:var(--card);border-top:1px solid var(--b1);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-info{font-size:12px;color:var(--t3)}
+.footer-name{color:var(--gold2);font-weight:500}
+.footer-links{display:flex;gap:16px}
+.footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue2);text-decoration:none}
+
+/* HIDDEN */
+.hidden{display:none!important}
+
+/* CHART */
+.chart-panel{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:24px;margin-bottom:24px}
+.cp-title{font-family:'Instrument Serif',serif;font-size:18px;margin-bottom:4px}
+.cp-sub{font-size:12px;color:var(--t3);margin-bottom:16px}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+.hero h1{font-size:34px}
+.hero{padding:40px 20px 32px}
+.role-section,.quiz-section,.results-wrap,.progress-section{padding-left:20px;padding-right:20px}
+.sal-grid,.opts.cols2{grid-template-columns:1fr}
+.footer{padding:16px 20px}
+}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div class="wrap">
+<div class="content">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><span class="pulse-dot"></span>Live Assessment Tool · Updated June 2026</div>
+  <h1>Are you ready to<br>work in <span class="gold"><em>Dubai, UAE?</em></span></h1>
+  <p class="hero-sub">The most comprehensive UAE career readiness assessment for any profession. Get your personalised score, realistic AED salary range and an exact roadmap to your first UAE job. Free for anyone targeting a UAE career.</p>
+  <div class="stats-row">
+    <div class="stat-pill"><div class="stat-icon g">✦</div>10 career tracks covered</div>
+    <div class="stat-pill"><div class="stat-icon b">✦</div>Real 2026 salary data</div>
+    <div class="stat-pill"><div class="stat-icon gold">✦</div>Personalised roadmap</div>
+    <div class="stat-pill"><div class="stat-icon p">✦</div>Free forever</div>
+  </div>
+</div>
+
+<!-- STEP 0: ROLE SELECTOR -->
+<div id="step0" class="role-section">
+  <div class="rs-title">What is your target career in UAE?</div>
+  <div class="rs-sub">Select the field that best matches the role you are aiming for. Your entire assessment will be personalised to that career track.</div>
+  <div class="roles-grid">
+    <div class="r-analytics"><div class="role-card" onclick="selectRole('analytics',this)">
+      <span class="role-icon">📊</span>
+      <div class="role-name">Data and Analytics</div>
+      <div class="role-desc">Data Analyst, Business Intelligence, Analytics Engineer</div>
+      <div class="role-badge">2,900 openings/month</div>
+    </div></div>
+    <div class="r-software"><div class="role-card" onclick="selectRole('software',this)">
+      <span class="role-icon">💻</span>
+      <div class="role-name">Software Engineering</div>
+      <div class="role-desc">Software Engineer, Developer, Full Stack, Mobile</div>
+      <div class="role-badge">High demand</div>
+    </div></div>
+    <div class="r-finance"><div class="role-card" onclick="selectRole('finance',this)">
+      <span class="role-icon">💰</span>
+      <div class="role-name">Finance and Accounting</div>
+      <div class="role-desc">Finance Analyst, Accountant, Treasury, Audit</div>
+      <div class="role-badge">Top paying sector</div>
+    </div></div>
+    <div class="r-business"><div class="role-card" onclick="selectRole('business',this)">
+      <span class="role-icon">📋</span>
+      <div class="role-name">Business Analysis</div>
+      <div class="role-desc">Business Analyst, Product Analyst, Systems Analyst</div>
+      <div class="role-badge">Growing fast</div>
+    </div></div>
+    <div class="r-marketing"><div class="role-card" onclick="selectRole('marketing',this)">
+      <span class="role-icon">📣</span>
+      <div class="role-name">Marketing and Digital</div>
+      <div class="role-desc">Digital Marketer, Brand Manager, SEO, Social Media</div>
+      <div class="role-badge">Creative careers</div>
+    </div></div>
+    <div class="r-hr"><div class="role-card" onclick="selectRole('hr',this)">
+      <span class="role-icon">🤝</span>
+      <div class="role-name">HR and People</div>
+      <div class="role-desc">HR Manager, Talent Acquisition, L&amp;D, People Ops</div>
+      <div class="role-badge">AED 25K avg entry</div>
+    </div></div>
+    <div class="r-operations"><div class="role-card" onclick="selectRole('operations',this)">
+      <span class="role-icon">⚙️</span>
+      <div class="role-name">Operations and Logistics</div>
+      <div class="role-desc">Operations Manager, Supply Chain, Project Manager</div>
+      <div class="role-badge">Infrastructure boom</div>
+    </div></div>
+    <div class="r-sales"><div class="role-card" onclick="selectRole('sales',this)">
+      <span class="role-icon">🎯</span>
+      <div class="role-name">Sales and Business Dev</div>
+      <div class="role-desc">Sales Executive, Account Manager, Business Development</div>
+      <div class="role-badge">Commission upside</div>
+    </div></div>
+    <div class="r-consulting"><div class="role-card" onclick="selectRole('consulting',this)">
+      <span class="role-icon">🏛️</span>
+      <div class="role-name">Consulting</div>
+      <div class="role-desc">Management Consultant, Strategy Analyst, Advisory</div>
+      <div class="role-badge">Big 4 hiring</div>
+    </div></div>
+    <div class="r-engineering"><div class="role-card" onclick="selectRole('engineering',this)">
+      <span class="role-icon">🏗️</span>
+      <div class="role-name">Engineering and Construction</div>
+      <div class="role-desc">Civil, Mechanical, Electrical, Project Engineer</div>
+      <div class="role-badge">Mega projects</div>
+    </div></div>
+  </div>
+  <div style="text-align:center;margin-top:28px">
+    <button class="btn-next" id="roleNextBtn" onclick="startAssessment()" style="display:inline-flex;opacity:0.5;cursor:not-allowed" disabled>Start My Assessment &rarr;</button>
+  </div>
+</div>
+
+<!-- PROGRESS (shown during quiz) -->
+<div id="progressBar" class="progress-section hidden">
+  <div class="progress-header">
+    <div class="progress-title" id="progressTitle">Section 1 of 5</div>
+    <div class="progress-steps" id="progressSteps">20%</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+  <div class="step-dots" id="stepDots"></div>
+</div>
+
+<!-- QUIZ SECTIONS -->
+<div id="quizArea" class="quiz-section hidden"></div>
+
+<!-- RESULTS -->
+<div id="resultsArea" class="results-wrap hidden"></div>
+
+</div><!-- .content -->
+
+<div class="footer">
+  <div class="footer-info">Built by <span class="footer-name">Srikanth Dhamodharan</span> · MSc Business Analytics, DCU Ireland · Graduating September 2026 · Salary data: Michael Page UAE 2026, Cooper Fitch 2026, Hays GCC 2026, PayScale UAE 2026</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://srikanthdhamodharan.github.io">Portfolio</a>
+    <a class="footer-link" href="https://linkedin.com/in/sri-dhamodharan">LinkedIn</a>
+    <a class="footer-link" href="https://uae-smartcity-analytics.streamlit.app">UAE App</a>
+    <a class="footer-link" href="https://github.com/srikanthdhamodharan">GitHub</a>
+  </div>
+</div>
+</div><!-- .wrap -->
+
+<script>
+const AED_INR = 26.04;
+
+const ROLES = {
+  analytics:{name:'Data and Analytics',icon:'📊',color:'var(--gold)',
+    salaries:{con:8000,real:11000,ref:14000},
+    skills:[
+      {id:'sql',name:'SQL',pts:12,note:'Non-negotiable in UAE'},
+      {id:'python',name:'Python',pts:11,note:'In 82% of postings'},
+      {id:'excel',name:'Advanced Excel',pts:8,note:'Required by most'},
+      {id:'powerbi',name:'Power BI',pts:9,note:'Most popular BI tool'},
+      {id:'tableau',name:'Tableau',pts:6,note:'Second popular BI tool'},
+      {id:'ml',name:'Machine Learning',pts:8,note:'Strong differentiator'},
+      {id:'stats',name:'Statistical Analysis',pts:6,note:'Banking and finance'},
+      {id:'etl',name:'ETL Pipelines',pts:5,note:'Data engineering'},
+      {id:'dataviz',name:'Data Visualisation',pts:4,note:'Dashboard building'},
+      {id:'cloud',name:'Cloud Basics (AWS/Azure)',pts:5,note:'Growing requirement'},
+      {id:'pandas',name:'Pandas and NumPy',pts:5,note:'Python data libraries'},
+      {id:'git',name:'Git and GitHub',pts:3,note:'Version control'},
+    ],
+    certs:[
+      {id:'ibm',name:'IBM Credly Badge',pts:6},{id:'mspower',name:'Microsoft PL-300 Power BI',pts:7},
+      {id:'google',name:'Google Data Analytics',pts:5},{id:'aws',name:'AWS/Azure Data Cert',pts:5},
+      {id:'iiba',name:'IIBA ECBA or CCBA',pts:4},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:3},
+    ],
+    companies:[
+      {name:'Property Finder',sector:'Property Tech',roles:'Data Analyst, Product Analyst',tag:'Any nationality',tc:'ct-green'},
+      {name:'Bayut and Dubizzle',sector:'Property Tech',roles:'Data and ML Analyst',tag:'UAE unicorn',tc:'ct-green'},
+      {name:'Noon',sector:'E-commerce',roles:'Data Analyst, BI Analyst',tag:'Any nationality',tc:'ct-green'},
+      {name:'Amazon UAE',sector:'E-commerce',roles:'Data Analyst, Supply Chain',tag:'Graduate intake',tc:'ct-blue'},
+      {name:'TikTok Dubai',sector:'Tech',roles:'Data Analyst Graduate 2026',tag:'Open to all',tc:'ct-blue'},
+      {name:'Emirates NBD',sector:'Banking',roles:'IT and Data Analyst',tag:'Fresher programmes',tc:'ct-amber'},
+      {name:'CBRE UAE',sector:'Real Estate',roles:'Market Research Analyst',tag:'Global MNC',tc:'ct-gold'},
+      {name:'Accenture UAE',sector:'Consulting',roles:'Data and AI Analyst',tag:'Any nationality',tc:'ct-blue'},
+    ]
+  },
+  software:{name:'Software Engineering',icon:'💻',color:'var(--blue)',
+    salaries:{con:9000,real:13000,ref:16000},
+    skills:[
+      {id:'js',name:'JavaScript',pts:11,note:'In 75% of job postings'},
+      {id:'python',name:'Python',pts:10,note:'Highly valued in UAE'},
+      {id:'java',name:'Java or Kotlin',pts:8,note:'Enterprise development'},
+      {id:'react',name:'React or Vue',pts:9,note:'Frontend frameworks'},
+      {id:'nodejs',name:'Node.js',pts:7,note:'Backend development'},
+      {id:'sql',name:'SQL and Databases',pts:8,note:'Required in most roles'},
+      {id:'cloud',name:'Cloud (AWS/Azure/GCP)',pts:9,note:'Fastest growing'},
+      {id:'docker',name:'Docker and Kubernetes',pts:6,note:'DevOps skills'},
+      {id:'git',name:'Git and CI/CD',pts:6,note:'Version control'},
+      {id:'api',name:'REST API Design',pts:5,note:'Standard practice'},
+      {id:'mobile',name:'Mobile (iOS/Android)',pts:5,note:'High UAE demand'},
+      {id:'cyber',name:'Cybersecurity Basics',pts:4,note:'Growing requirement'},
+    ],
+    certs:[
+      {id:'aws',name:'AWS Certified Developer',pts:8},{id:'azure',name:'Microsoft Azure Developer',pts:7},
+      {id:'gcp',name:'Google Cloud Professional',pts:6},{id:'ckad',name:'CKA/CKAD Kubernetes',pts:5},
+      {id:'scrum',name:'Scrum Master/Agile',pts:4},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Careem',sector:'Tech and Mobility',roles:'Software Engineer',tag:'Uber subsidiary',tc:'ct-blue'},
+      {name:'Noon',sector:'E-commerce',roles:'Backend and Frontend Engineer',tag:'Any nationality',tc:'ct-green'},
+      {name:'Amazon UAE',sector:'Cloud and E-commerce',roles:'Software Engineer',tag:'Graduate intake',tc:'ct-blue'},
+      {name:'TikTok Dubai',sector:'Social Media Tech',roles:'Software Engineer',tag:'Open to all',tc:'ct-blue'},
+      {name:'Talabat',sector:'Food Tech',roles:'Software Engineer',tag:'Delivery Hero subsidiary',tc:'ct-green'},
+      {name:'Microsoft UAE',sector:'Technology',roles:'Software Engineer',tag:'Graduate programme',tc:'ct-amber'},
+      {name:'Oracle UAE',sector:'Enterprise Tech',roles:'Software Engineer',tag:'MNC',tc:'ct-gold'},
+      {name:'Etisalat/e&',sector:'Telecom',roles:'Software Engineer',tag:'UAE telco giant',tc:'ct-blue'},
+    ]
+  },
+  finance:{name:'Finance and Accounting',icon:'💰',color:'var(--green)',
+    salaries:{con:7000,real:10000,ref:14000},
+    skills:[
+      {id:'excel',name:'Advanced Excel',pts:12,note:'Core requirement'},
+      {id:'ifrs',name:'IFRS/GAAP Standards',pts:10,note:'Banking and audit'},
+      {id:'powerbi',name:'Power BI or Tableau',pts:7,note:'Financial dashboards'},
+      {id:'sap',name:'SAP or Oracle Finance',pts:8,note:'ERP systems'},
+      {id:'modelling',name:'Financial Modelling',pts:9,note:'Investment and banking'},
+      {id:'reporting',name:'Management Reporting',pts:7,note:'Essential for all roles'},
+      {id:'sql',name:'SQL for Finance',pts:6,note:'Growing requirement'},
+      {id:'budgeting',name:'Budgeting and Forecasting',pts:8,note:'Core finance skill'},
+      {id:'risk',name:'Risk and Compliance',pts:6,note:'Regulatory awareness'},
+      {id:'valuation',name:'Valuation Techniques',pts:5,note:'Investment roles'},
+    ],
+    certs:[
+      {id:'acca',name:'ACCA or CPA',pts:10},{id:'cfa',name:'CFA (any level)',pts:9},
+      {id:'cma',name:'CMA Certification',pts:7},{id:'uaefin',name:'UAE Financial Regulations',pts:5},
+      {id:'excel',name:'Microsoft Excel Specialist',pts:4},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Emirates NBD',sector:'Banking',roles:'Finance Analyst, Accountant',tag:'AED 20K to 27K',tc:'ct-amber'},
+      {name:'First Abu Dhabi Bank',sector:'Banking',roles:'Finance Analyst, Treasury',tag:'MNC bank',tc:'ct-gold'},
+      {name:'PwC Middle East',sector:'Audit and Advisory',roles:'Analyst, Associate',tag:'Big 4',tc:'ct-blue'},
+      {name:'Deloitte UAE',sector:'Audit and Advisory',roles:'Finance Analyst',tag:'Big 4',tc:'ct-blue'},
+      {name:'KPMG UAE',sector:'Audit and Advisory',roles:'Financial Analyst',tag:'Big 4',tc:'ct-blue'},
+      {name:'Mashreq Bank',sector:'Banking',roles:'Finance Executive, Analyst',tag:'Indian friendly',tc:'ct-green'},
+      {name:'DIFC Firms',sector:'Financial Centre',roles:'Multiple finance roles',tag:'Premium salaries',tc:'ct-gold'},
+      {name:'Aldar Properties',sector:'Real Estate',roles:'Finance Analyst',tag:'Abu Dhabi',tc:'ct-amber'},
+    ]
+  },
+  business:{name:'Business Analysis',icon:'📋',color:'var(--purple)',
+    salaries:{con:7500,real:10500,ref:13500},
+    skills:[
+      {id:'req',name:'Requirements Gathering',pts:12,note:'Core BA skill'},
+      {id:'brd',name:'BRD and Documentation',pts:10,note:'In all BA postings'},
+      {id:'sql',name:'SQL',pts:8,note:'Strong advantage'},
+      {id:'excel',name:'Advanced Excel',pts:9,note:'Required by all'},
+      {id:'powerbi',name:'Power BI or Tableau',pts:7,note:'Preferred by employers'},
+      {id:'agile',name:'Agile and Scrum',pts:8,note:'Most UAE teams are Agile'},
+      {id:'process',name:'Process Mapping',pts:7,note:'Gap and flow analysis'},
+      {id:'stakeholder',name:'Stakeholder Management',pts:8,note:'Client-facing skill'},
+      {id:'uat',name:'UAT Support',pts:6,note:'Testing experience'},
+      {id:'python',name:'Python Basics',pts:4,note:'Growing advantage'},
+    ],
+    certs:[
+      {id:'iiba',name:'IIBA ECBA or CCBA',pts:10},{id:'pmp',name:'PMP or PRINCE2',pts:7},
+      {id:'agile',name:'Agile/Scrum Certification',pts:6},{id:'ibm',name:'IBM Design Thinking',pts:5},
+      {id:'msoffice',name:'Microsoft Office Specialist',pts:4},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:3},
+    ],
+    companies:[
+      {name:'Simply Solved Dubai',sector:'Tech and Consulting',roles:'Junior AI Business Analyst',tag:'0 to 2 years',tc:'ct-green'},
+      {name:'Accenture UAE',sector:'Consulting',roles:'Business Analyst',tag:'Any nationality',tc:'ct-blue'},
+      {name:'IBM UAE',sector:'Technology',roles:'Business Analyst',tag:'MNC',tc:'ct-blue'},
+      {name:'Deloitte UAE',sector:'Consulting',roles:'Business Analyst',tag:'Big 4',tc:'ct-blue'},
+      {name:'GulfTalent Dubai',sector:'HR Tech',roles:'Junior Business Analyst',tag:'Any nationality',tc:'ct-green'},
+      {name:'Al-Futtaim Group',sector:'Diversified',roles:'Business Analyst',tag:'Major UAE group',tc:'ct-gold'},
+      {name:'Etisalat/e&',sector:'Telecom',roles:'Business Analyst',tag:'Large employer',tc:'ct-amber'},
+      {name:'Staff Connect UAE',sector:'IT Consulting',roles:'Junior Business Analyst',tag:'Banking sector',tc:'ct-green'},
+    ]
+  },
+  marketing:{name:'Marketing and Digital',icon:'📣',color:'var(--pink)',
+    salaries:{con:7000,real:10000,ref:13000},
+    skills:[
+      {id:'digital',name:'Digital Marketing',pts:12,note:'Core requirement'},
+      {id:'social',name:'Social Media Management',pts:9,note:'High UAE demand'},
+      {id:'seo',name:'SEO and SEM',pts:8,note:'E-commerce companies'},
+      {id:'analytics',name:'Google Analytics/GA4',pts:8,note:'Data-driven marketing'},
+      {id:'content',name:'Content Creation',pts:7,note:'Brand building'},
+      {id:'paid',name:'Paid Advertising',pts:8,note:'Meta, Google, TikTok Ads'},
+      {id:'email',name:'Email Marketing',pts:5,note:'CRM campaigns'},
+      {id:'crm',name:'CRM Systems',pts:6,note:'Salesforce, HubSpot'},
+      {id:'video',name:'Video and Visual',pts:5,note:'UAE market preference'},
+      {id:'arabic',name:'Arabic Language',pts:6,note:'Major UAE advantage'},
+    ],
+    certs:[
+      {id:'google',name:'Google Digital Marketing',pts:7},{id:'meta',name:'Meta Blueprint Certification',pts:6},
+      {id:'hubspot',name:'HubSpot Marketing Cert',pts:5},{id:'ga4',name:'Google Analytics Cert',pts:5},
+      {id:'canva',name:'Canva or Adobe Suite',pts:3},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Noon',sector:'E-commerce',roles:'Digital Marketing Executive',tag:'Any nationality',tc:'ct-green'},
+      {name:'Property Finder',sector:'Property Tech',roles:'Marketing Analyst',tag:'Strong culture',tc:'ct-green'},
+      {name:'Talabat',sector:'Food Tech',roles:'Marketing Executive',tag:'Regional growth',tc:'ct-blue'},
+      {name:'Careem',sector:'Tech',roles:'Growth Marketing',tag:'Uber subsidiary',tc:'ct-blue'},
+      {name:'Publicis UAE',sector:'Ad Agency',roles:'Account Executive',tag:'Global agency',tc:'ct-amber'},
+      {name:'Emaar Properties',sector:'Real Estate',roles:'Marketing Executive',tag:'Premium brand',tc:'ct-gold'},
+      {name:'TBWA UAE',sector:'Ad Agency',roles:'Digital Marketing',tag:'Global agency',tc:'ct-blue'},
+      {name:'Chalhoub Group',sector:'Luxury Retail',roles:'Digital Marketer',tag:'Premium sector',tc:'ct-gold'},
+    ]
+  },
+  hr:{name:'HR and People',icon:'🤝',color:'var(--teal)',
+    salaries:{con:8000,real:12000,ref:16000},
+    skills:[
+      {id:'recruit',name:'Talent Acquisition',pts:12,note:'Core HR skill'},
+      {id:'hris',name:'HRIS Systems (SAP/Oracle)',pts:9,note:'Required in large firms'},
+      {id:'ld',name:'Learning and Development',pts:8,note:'UAE priority area'},
+      {id:'comp',name:'Compensation and Benefits',pts:8,note:'Analytical HR skill'},
+      {id:'labour',name:'UAE Labour Law',pts:10,note:'Critical for UAE HR'},
+      {id:'onboard',name:'Onboarding and Culture',pts:7,note:'Employee experience'},
+      {id:'excel',name:'Advanced Excel',pts:6,note:'HR reporting'},
+      {id:'powerbi',name:'HR Analytics/Power BI',pts:6,note:'Growing HR need'},
+      {id:'comm',name:'Communication Skills',pts:7,note:'Stakeholder management'},
+      {id:'arabic',name:'Arabic Language',pts:5,note:'UAE advantage'},
+    ],
+    certs:[
+      {id:'cipd',name:'CIPD Qualification',pts:9},{id:'shrm',name:'SHRM-CP or PHR',pts:8},
+      {id:'uaelabour',name:'UAE Labour Law Cert',pts:7},{id:'coaching',name:'Coaching Certification',pts:5},
+      {id:'talentplus',name:'Talent Management Cert',pts:4},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Chalhoub Group',sector:'Luxury Retail',roles:'HR Executive',tag:'Major employer',tc:'ct-gold'},
+      {name:'Emirates Group',sector:'Aviation',roles:'HR Officer',tag:'Large HR team',tc:'ct-amber'},
+      {name:'PwC Middle East',sector:'Professional Services',roles:'HR Analyst',tag:'Big 4',tc:'ct-blue'},
+      {name:'Al-Futtaim',sector:'Diversified',roles:'HR Coordinator',tag:'UAE conglomerate',tc:'ct-gold'},
+      {name:'Jumeirah Group',sector:'Hospitality',roles:'HR Executive',tag:'Luxury hotels',tc:'ct-green'},
+      {name:'Deloitte UAE',sector:'Consulting',roles:'HR Consultant',tag:'Big 4',tc:'ct-blue'},
+      {name:'Nakheel',sector:'Real Estate',roles:'HR Specialist',tag:'Government developer',tc:'ct-amber'},
+      {name:'Majid Al Futtaim',sector:'Retail and Leisure',roles:'HR Business Partner',tag:'Major conglomerate',tc:'ct-gold'},
+    ]
+  },
+  operations:{name:'Operations and Logistics',icon:'⚙️',color:'var(--amber)',
+    salaries:{con:7000,real:11000,ref:15000},
+    skills:[
+      {id:'supplychain',name:'Supply Chain Management',pts:12,note:'High demand UAE'},
+      {id:'process',name:'Process Improvement',pts:10,note:'Lean and Six Sigma'},
+      {id:'excel',name:'Advanced Excel',pts:8,note:'Operations reporting'},
+      {id:'erp',name:'ERP Systems (SAP/Oracle)',pts:9,note:'Required in large firms'},
+      {id:'project',name:'Project Management',pts:9,note:'PMP valued highly'},
+      {id:'logistics',name:'Logistics and Warehousing',pts:7,note:'DP World, Aramex'},
+      {id:'kpi',name:'KPI and Metrics',pts:7,note:'Performance management'},
+      {id:'powerbi',name:'Power BI or Tableau',pts:5,note:'Operations dashboards'},
+      {id:'vendor',name:'Vendor Management',pts:6,note:'Procurement skills'},
+      {id:'lean',name:'Lean or Six Sigma',pts:6,note:'Process efficiency'},
+    ],
+    certs:[
+      {id:'pmp',name:'PMP Certification',pts:9},{id:'sixsigma',name:'Lean Six Sigma (any)',pts:7},
+      {id:'cips',name:'CIPS Supply Chain',pts:6},{id:'apics',name:'APICS CPIM or CSCP',pts:6},
+      {id:'prince2',name:'PRINCE2',pts:5},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'DP World',sector:'Logistics',roles:'Operations Analyst',tag:'Global giant',tc:'ct-blue'},
+      {name:'Aramex',sector:'Logistics',roles:'Operations Executive',tag:'Regional leader',tc:'ct-green'},
+      {name:'Amazon UAE',sector:'E-commerce Logistics',roles:'Operations Analyst',tag:'Graduate intake',tc:'ct-blue'},
+      {name:'Emaar Properties',sector:'Real Estate',roles:'Operations Manager',tag:'Premium employer',tc:'ct-gold'},
+      {name:'Nakheel',sector:'Real Estate',roles:'Project Coordinator',tag:'UAE developer',tc:'ct-amber'},
+      {name:'Chalhoub Group',sector:'Retail',roles:'Supply Chain Analyst',tag:'Major employer',tc:'ct-gold'},
+      {name:'Etihad Airways',sector:'Aviation',roles:'Operations Analyst',tag:'Abu Dhabi',tc:'ct-amber'},
+      {name:'Majid Al Futtaim',sector:'Retail and Leisure',roles:'Operations Executive',tag:'Conglomerate',tc:'ct-gold'},
+    ]
+  },
+  sales:{name:'Sales and Business Dev',icon:'🎯',color:'var(--red)',
+    salaries:{con:6000,real:10000,ref:15000},
+    skills:[
+      {id:'b2b',name:'B2B Sales',pts:12,note:'Core enterprise skill'},
+      {id:'crm',name:'CRM (Salesforce/HubSpot)',pts:9,note:'Required by most firms'},
+      {id:'negotiation',name:'Negotiation Skills',pts:10,note:'Key UAE differentiator'},
+      {id:'pipeline',name:'Sales Pipeline Management',pts:8,note:'CRM and reporting'},
+      {id:'presentation',name:'Presentation Skills',pts:8,note:'Client facing'},
+      {id:'arabic',name:'Arabic Language',pts:7,note:'Strong UAE advantage'},
+      {id:'excel',name:'Excel and Reporting',pts:6,note:'Sales analysis'},
+      {id:'networking',name:'Networking',pts:7,note:'UAE is relationship driven'},
+      {id:'digital',name:'Digital Sales Tools',pts:5,note:'LinkedIn Sales Navigator'},
+      {id:'product',name:'Product Knowledge',pts:6,note:'Sector expertise'},
+    ],
+    certs:[
+      {id:'salesforce',name:'Salesforce Sales Cloud Cert',pts:7},{id:'hubspot',name:'HubSpot Sales Cert',pts:5},
+      {id:'challenger',name:'Challenger Sale Training',pts:4},{id:'spin',name:'SPIN Selling Trained',pts:4},
+      {id:'rera',name:'RERA Broker (if RE sales)',pts:8},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Property Finder',sector:'Property Tech',roles:'Sales Executive',tag:'Commission heavy',tc:'ct-green'},
+      {name:'Bayut and Dubizzle',sector:'Property',roles:'Sales Account Manager',tag:'UAE unicorn',tc:'ct-green'},
+      {name:'Oracle UAE',sector:'Technology',roles:'Sales Representative',tag:'Enterprise sales',tc:'ct-blue'},
+      {name:'Salesforce UAE',sector:'Tech CRM',roles:'Account Executive',tag:'High OTE',tc:'ct-amber'},
+      {name:'CBRE UAE',sector:'Real Estate',roles:'Sales Broker',tag:'Global firm',tc:'ct-gold'},
+      {name:'Chalhoub Group',sector:'Luxury Retail',roles:'Sales Executive',tag:'Luxury sector',tc:'ct-gold'},
+      {name:'Emaar Properties',sector:'Real Estate',roles:'Sales Executive',tag:'Off-plan sales',tc:'ct-blue'},
+      {name:'Danube Properties',sector:'Real Estate',roles:'Sales Agent',tag:'Commission 2 to 4%',tc:'ct-green'},
+    ]
+  },
+  consulting:{name:'Consulting',icon:'🏛️',color:'#A78BFA',
+    salaries:{con:9000,real:13000,ref:17000},
+    skills:[
+      {id:'analysis',name:'Business Analysis',pts:12,note:'Core consulting skill'},
+      {id:'powerpoint',name:'PowerPoint and Decks',pts:10,note:'Client deliverables'},
+      {id:'excel',name:'Advanced Excel/Modelling',pts:10,note:'Financial analysis'},
+      {id:'frameworks',name:'Consulting Frameworks',pts:9,note:'MECE, SWOT, Porter'},
+      {id:'research',name:'Market Research',pts:8,note:'Primary and secondary'},
+      {id:'communication',name:'Executive Communication',pts:9,note:'C-suite interaction'},
+      {id:'sql',name:'SQL and Data Analysis',pts:7,note:'Growing requirement'},
+      {id:'powerbi',name:'Power BI or Tableau',pts:6,note:'Client dashboards'},
+      {id:'project',name:'Project Management',pts:7,note:'Delivery management'},
+      {id:'arabic',name:'Arabic Language',pts:5,note:'GCC advantage'},
+    ],
+    certs:[
+      {id:'pmp',name:'PMP Certification',pts:7},{id:'ibm',name:'IBM Design Thinking',pts:6},
+      {id:'agile',name:'Agile/Scrum Cert',pts:5},{id:'cfa',name:'CFA (finance consulting)',pts:7},
+      {id:'mba',name:'MBA (completed)',pts:8},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'Deloitte UAE',sector:'Big 4',roles:'Analyst, Consultant',tag:'Volume hiring',tc:'ct-blue'},
+      {name:'PwC Middle East',sector:'Big 4',roles:'Associate, Analyst',tag:'Graduate intake',tc:'ct-blue'},
+      {name:'KPMG UAE',sector:'Big 4',roles:'Business Analyst',tag:'Strong culture',tc:'ct-blue'},
+      {name:'EY UAE',sector:'Big 4',roles:'Business Analyst',tag:'Any nationality',tc:'ct-blue'},
+      {name:'Accenture UAE',sector:'Tech Consulting',roles:'Analyst, Consultant',tag:'Large team',tc:'ct-amber'},
+      {name:'McKinsey Dubai',sector:'MBB',roles:'Business Analyst',tag:'Prestigious',tc:'ct-gold'},
+      {name:'BCG Dubai',sector:'MBB',roles:'Associate',tag:'Selective',tc:'ct-gold'},
+      {name:'Oliver Wyman UAE',sector:'Boutique MBB',roles:'Analyst',tag:'Finance focus',tc:'ct-amber'},
+    ]
+  },
+  engineering:{name:'Engineering and Construction',icon:'🏗️',color:'#06B6D4',
+    salaries:{con:8000,real:12000,ref:16000},
+    skills:[
+      {id:'cad',name:'AutoCAD or BIM',pts:12,note:'Core engineering tool'},
+      {id:'structural',name:'Structural/Civil Analysis',pts:10,note:'Infrastructure projects'},
+      {id:'project',name:'Project Management',pts:10,note:'Mega project experience'},
+      {id:'codes',name:'UAE/IBC Building Codes',pts:9,note:'Compliance critical'},
+      {id:'mep',name:'MEP Systems Knowledge',pts:7,note:'Building services'},
+      {id:'estimation',name:'Cost Estimation',pts:8,note:'Quantity surveying'},
+      {id:'safety',name:'HSE and Safety',pts:8,note:'Mandatory in UAE'},
+      {id:'software',name:'Engineering Software (SAP2000)',pts:6,note:'Analysis tools'},
+      {id:'reporting',name:'Technical Reporting',pts:6,note:'Documentation skills'},
+      {id:'arabic',name:'Arabic Language',pts:3,note:'Advantage in government'},
+    ],
+    certs:[
+      {id:'pmp',name:'PMP Certification',pts:8},{id:'peng',name:'Professional Engineer (PE)',pts:7},
+      {id:'leed',name:'LEED Green Associate',pts:6},{id:'nebosh',name:'NEBOSH Safety Cert',pts:6},
+      {id:'revit',name:'Autodesk Revit Cert',pts:5},{id:'linkedin',name:'LinkedIn Learning (3+)',pts:2},
+    ],
+    companies:[
+      {name:'AECOM UAE',sector:'Engineering Consultancy',roles:'Graduate Engineer',tag:'Global firm',tc:'ct-blue'},
+      {name:'Atkins UAE',sector:'Engineering',roles:'Civil/Structural Engineer',tag:'SNC-Lavalin',tc:'ct-blue'},
+      {name:'Parsons UAE',sector:'Infrastructure',roles:'Project Engineer',tag:'US firm',tc:'ct-amber'},
+      {name:'Emaar Properties',sector:'Real Estate Dev',roles:'Project Engineer',tag:'Dubai developer',tc:'ct-gold'},
+      {name:'Nakheel',sector:'Real Estate Dev',roles:'Site Engineer',tag:'Government developer',tc:'ct-amber'},
+      {name:'Aldar Properties',sector:'Real Estate',roles:'Project Manager',tag:'Abu Dhabi',tc:'ct-gold'},
+      {name:'Dubai RTA',sector:'Government',roles:'Infrastructure Engineer',tag:'Metro and roads',tc:'ct-blue'},
+      {name:'Mott MacDonald UAE',sector:'Engineering',roles:'Graduate Engineer',tag:'Global consultant',tc:'ct-green'},
+    ]
+  }
+};
+
+const QUESTIONS = [
+  {
+    id:'edu_degree',
+    category:'Education',
+    title:'What is your highest completed or current degree?',
+    hint:'Your educational qualification is the foundation of your UAE application',
+    opts:[
+      {label:'PhD in relevant field',detail:'Maximum academic credibility',pts:15},
+      {label:'Masters degree (MSc, MBA) in relevant field',detail:'Highly valued by UAE employers',pts:13},
+      {label:'Masters degree in adjacent field',detail:'Good credibility with right skills',pts:10},
+      {label:'Bachelors in Computer Science, Engineering or Technology',detail:'Strong technical foundation',pts:9},
+      {label:'Bachelors in Business, Finance, Economics or related',detail:'Good business foundation',pts:8},
+      {label:'Bachelors in Science, Arts or Humanities',detail:'Supplement with strong skills',pts:6},
+      {label:'Diploma or professional qualification',detail:'Skills matter most',pts:4},
+      {label:'No formal degree yet',detail:'Portfolio and skills are critical',pts:2},
+    ]
+  },
+  {
+    id:'edu_uni',
+    category:'Education',
+    title:'Where is your degree from?',
+    hint:'UAE employers place significant weight on the institution type and country',
+    opts:[
+      {label:'UK, Ireland, Australia, Canada or Europe (QS Top 500)',detail:'Highest recognition in UAE hiring',pts:10},
+      {label:'USA top university',detail:'Strong international credibility',pts:9},
+      {label:'UAE or GCC university',detail:'Local market knowledge advantage',pts:8},
+      {label:'IIT, IIM, BITS, NIT or top Indian institution',detail:'Strong technical reputation in UAE',pts:7},
+      {label:'Other Indian private university',detail:'Widely recognised in UAE market',pts:5},
+      {label:'Other Asian or international university',detail:'Credibility through skills and portfolio',pts:4},
+    ]
+  },
+  {
+    id:'edu_grade',
+    category:'Education',
+    title:'What is your academic grade or CGPA?',
+    hint:'Academic performance signals discipline and capability to UAE employers',
+    opts:[
+      {label:'First Class Honours or above 8.0 CGPA',detail:'Outstanding academic performance',pts:5},
+      {label:'Second Class Upper or 7.0 to 7.9 CGPA',detail:'Strong academic performance',pts:4},
+      {label:'Second Class Lower or 6.0 to 6.9 CGPA',detail:'Acceptable to most UAE employers',pts:3},
+      {label:'Pass or below 6.0 CGPA',detail:'Skills and portfolio become critical',pts:1},
+    ]
+  },
+  {
+    id:'exp_months',
+    category:'Experience',
+    title:'How many months of combined professional experience do you have?',
+    hint:'Include internships, volunteering, part-time work, research roles and freelance',
+    opts:[
+      {label:'More than 36 months (3 plus years)',detail:'Experienced professional',pts:18},
+      {label:'25 to 36 months (2 to 3 years)',detail:'Strong early career profile',pts:15},
+      {label:'13 to 24 months (1 to 2 years)',detail:'Good foundation for UAE roles',pts:12},
+      {label:'7 to 12 months',detail:'Emerging professional',pts:9},
+      {label:'3 to 6 months',detail:'Internship level experience',pts:5},
+      {label:'1 to 2 months',detail:'Very early stage',pts:2},
+      {label:'No formal experience yet',detail:'Portfolio becomes critical',pts:0},
+    ]
+  },
+  {
+    id:'exp_org',
+    category:'Experience',
+    title:'What is the highest level of organisation you have worked with?',
+    hint:'The type and credibility of your employer matters as much as the years',
+    opts:[
+      {label:'Government or public sector organisation',detail:'Highest credibility for UAE banking and government hiring',pts:10},
+      {label:'Multinational corporation (Fortune 500 or equivalent)',detail:'Strong international brand credibility',pts:9},
+      {label:'Accredited professional body or association',detail:'Sector credibility and professional network',pts:8},
+      {label:'Established private company with 50 plus employees',detail:'Good professional foundation',pts:6},
+      {label:'Startup or small business under 50 employees',detail:'Broad skills gained in fast environment',pts:4},
+      {label:'University project or academic research',detail:'Academic but not industry experience',pts:2},
+    ]
+  },
+  {
+    id:'exp_lead',
+    category:'Experience',
+    title:'Have you held any leadership, coordination or representative role?',
+    hint:'UAE employers value leadership potential even in early career candidates',
+    opts:[
+      {label:'Led a team of 3 or more people in a professional setting',detail:'Strong leadership signal for UAE employers',pts:8},
+      {label:'Coordinated a project or represented a group officially',detail:'Good coordination and communication proof',pts:6},
+      {label:'Contributed to team projects and cross-functional work',detail:'Team player with collaborative experience',pts:3},
+      {label:'No formal leadership experience yet',detail:'Build this through volunteering or student bodies',pts:0},
+    ]
+  },
+  {
+    id:'exp_uae',
+    category:'Experience',
+    title:'Do you have any direct UAE or GCC market knowledge or experience?',
+    hint:'Candidates who already understand the UAE market are strongly preferred by employers',
+    opts:[
+      {label:'Yes, worked or lived in UAE or GCC previously',detail:'Directly relevant UAE experience',pts:8},
+      {label:'Yes, UAE-focused projects, research or studies',detail:'Strong market awareness',pts:6},
+      {label:'Yes, worked with UAE or GCC clients remotely',detail:'Some market exposure',pts:4},
+      {label:'No direct UAE experience yet',detail:'Focus on UAE-specific projects to compensate',pts:0},
+    ]
+  },
+  {
+    id:'port_count',
+    category:'Portfolio',
+    title:'How many completed work samples or projects do you have publicly available?',
+    hint:'In 2026 UAE employers expect to see real work before inviting you for interview',
+    opts:[
+      {label:'5 or more projects or work samples',detail:'Exceptional portfolio depth',pts:12},
+      {label:'3 to 4 projects',detail:'Strong portfolio for most roles',pts:10},
+      {label:'2 projects',detail:'Good starting point',pts:7},
+      {label:'1 project',detail:'Minimal portfolio',pts:4},
+      {label:'No public portfolio yet',detail:'Build this as your first priority',pts:0},
+    ]
+  },
+  {
+    id:'port_uae',
+    category:'Portfolio',
+    title:'Are any of your projects or work samples focused on UAE or GCC market data?',
+    hint:'UAE-focused projects signal commitment to the market and are a significant differentiator',
+    opts:[
+      {label:'Yes, 3 or more UAE or GCC focused projects',detail:'Outstanding UAE market commitment',pts:10},
+      {label:'Yes, 1 to 2 UAE or GCC focused projects',detail:'Good market awareness and preparation',pts:7},
+      {label:'No but projects use real international data',detail:'Skills demonstrated, local context missing',pts:3},
+      {label:'No projects yet',detail:'Build UAE-focused projects as first priority',pts:0},
+    ]
+  },
+  {
+    id:'port_live',
+    category:'Portfolio',
+    title:'Do you have any live deployed work accessible via public URL?',
+    hint:'A live accessible project is significantly more impressive than static files or local code',
+    opts:[
+      {label:'Yes, 2 or more live deployed applications or dashboards',detail:'Production-level deployment skill',pts:8},
+      {label:'Yes, 1 live deployed application or dashboard',detail:'Demonstrates real deployment ability',pts:5},
+      {label:'GitHub or portfolio only, no live deployment',detail:'Code visible but not interactive',pts:2},
+      {label:'No public portfolio yet',detail:'Create GitHub account as first step',pts:0},
+    ]
+  },
+  {
+    id:'port_web',
+    category:'Portfolio',
+    title:'Do you have a professional online presence or portfolio website?',
+    hint:'Recruiters will Google you. A professional digital presence builds trust before interview.',
+    opts:[
+      {label:'Yes, professional portfolio website with all projects linked',detail:'Premium recruiter impression',pts:5},
+      {label:'Yes, GitHub Pages or similar with projects listed',detail:'Good digital presence',pts:3},
+      {label:'Strong LinkedIn profile only',detail:'Professional but limited depth',pts:2},
+      {label:'No online presence yet',detail:'Create LinkedIn and GitHub immediately',pts:0},
+    ]
+  },
+];
+
+let selectedRole = null;
+let currentQ = 0;
+let answers = {};
+let skillAnswers = {};
+let certAnswers = {};
+let currentPhase = 'questions'; // 'questions', 'skills', 'certs'
+let SKILL_Q_INDEX = QUESTIONS.length;
+let CERT_Q_INDEX = QUESTIONS.length + 1;
+let TOTAL_STEPS = QUESTIONS.length + 2;
+
+function selectRole(roleId, card){
+  selectedRole = roleId;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  const btn = document.getElementById('roleNextBtn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+}
+
+function startAssessment(){
+  if(!selectedRole) return;
+  document.getElementById('step0').classList.add('hidden');
+  document.getElementById('progressBar').classList.remove('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  currentQ = 0;
+  answers = {};
+  skillAnswers = {};
+  certAnswers = {};
+  currentPhase = 'questions';
+  buildStepDots();
+  renderQuestion(currentQ);
+  updateProgress(currentQ);
+}
+
+function buildStepDots(){
+  const c = document.getElementById('stepDots');
+  c.innerHTML = '';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i===0?' active':'');
+    d.id='dot'+i;
+    c.appendChild(d);
+  }
+}
+
+function updateProgress(idx){
+  const pct = Math.round(((idx+1)/TOTAL_STEPS)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressSteps').textContent = pct+'%';
+  const cats = ['Education','Education','Education','Experience','Experience','Experience','Experience','Portfolio','Portfolio','Portfolio','Portfolio','Technical Skills','Certifications'];
+  document.getElementById('progressTitle').textContent = (cats[idx]||'Assessment') + ' · Step '+(idx+1)+' of '+TOTAL_STEPS;
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const d=document.getElementById('dot'+i);
+    if(d){
+      d.className='step-dot'+(i<idx?' done':i===idx?' active':'');
+    }
+  }
+}
+
+function renderQuestion(idx){
+  if(idx < QUESTIONS.length){ renderStandardQ(idx); return; }
+  if(idx === SKILL_Q_INDEX){ renderSkillsQ(); return; }
+  if(idx === CERT_Q_INDEX){ renderCertsQ(); return; }
+}
+
+function renderStandardQ(idx){
+  const q = QUESTIONS[idx];
+  const saved = answers[q.id];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="q-header">
+      <div class="q-category">${q.category}</div>
+      <div class="q-title">${q.title}</div>
+      <div class="q-sub">${q.hint}</div>
+    </div>
+    <div class="question-block">
+      <div class="opts${q.opts.length<=4?' cols2':''}">
+        ${q.opts.map((o,i)=>`
+          <div class="opt${saved&&saved.idx===i?' sel':''}" onclick="selectAnswer('${q.id}',${i},${o.pts},this)">
+            <div class="opt-radio"></div>
+            <div class="opt-content">
+              <div class="opt-label">${o.label}</div>
+              <div class="opt-detail">${o.detail}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn-back" onclick="prevQ()">${idx===0?'Change Role':'Back'}</button>
+      <button class="btn-next" onclick="nextQ()">Continue &rarr;</button>
+    </div>`;
+}
+
+function renderSkillsQ(){
+  const role = ROLES[selectedRole];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="q-header">
+      <div class="q-category">Technical Skills</div>
+      <div class="q-title">Which of these skills do you have for ${role.name}?</div>
+      <div class="q-sub">Select every skill you can use confidently in a work setting. Be honest as this determines your salary range and company matches.</div>
+    </div>
+    <div class="question-block">
+      <div class="skills-wrap">
+        ${role.skills.map(s=>`
+          <div class="skill-toggle${skillAnswers[s.id]?' on':''}" onclick="toggleSkillA('${s.id}',${s.pts},this)">
+            <div class="st-check">${skillAnswers[s.id]?'✓':''}</div>
+            <div class="st-name">${s.name}</div>
+            <div class="st-pts">${s.note} · +${s.pts} pts</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn-back" onclick="prevQ()">Back</button>
+      <button class="btn-next" onclick="nextQ()">Continue &rarr;</button>
+    </div>`;
+}
+
+function renderCertsQ(){
+  const role = ROLES[selectedRole];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="q-header">
+      <div class="q-category">Certifications and Extras</div>
+      <div class="q-title">Which certifications and achievements do you have?</div>
+      <div class="q-sub">Verified certifications from reputable providers significantly boost UAE applications. Select all that apply.</div>
+    </div>
+    <div class="question-block">
+      <div class="skills-wrap">
+        ${role.certs.map(c=>`
+          <div class="skill-toggle${certAnswers[c.id]?' on':''}" onclick="toggleCertA('${c.id}',${c.pts},this)">
+            <div class="st-check">${certAnswers[c.id]?'✓':''}</div>
+            <div class="st-name">${c.name}</div>
+            <div class="st-pts">+${c.pts} pts</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="question-block" style="margin-top:0">
+      <div class="q-text">Do you have any publications, awards or notable achievements?</div>
+      <div class="opts cols2">
+        ${[
+          {l:'Published research paper (IEEE, Springer, etc.)',d:'Exceptional academic credibility',pts:8},
+          {l:'Competition winner or hackathon prize',d:'Strong problem solving proof',pts:5},
+          {l:'Elected representative or leadership award',d:'Soft skills credibility',pts:4},
+          {l:'Active LinkedIn with relevant content posts',d:'Thought leadership building',pts:2},
+          {l:'None of the above yet',d:'Start with LinkedIn posts',pts:0},
+        ].map((o,i)=>`
+          <div class="opt${certAnswers['pub']&&certAnswers['pub'].idx===i?' sel':''}" onclick="selectCertAnswer('pub',${i},${o.pts},this)">
+            <div class="opt-radio"></div>
+            <div class="opt-content"><div class="opt-label">${o.l}</div><div class="opt-detail">${o.d}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calculateResults()">Calculate My UAE Readiness Score &rarr;</button>
+    <div class="quiz-nav" style="padding-bottom:0">
+      <button class="btn-back" onclick="prevQ()">Back</button>
+      <div></div>
+    </div>`;
+}
+
+function selectAnswer(qid, idx, pts, el){
+  answers[qid] = {idx, pts};
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function toggleSkillA(id, pts, el){
+  if(skillAnswers[id]){ delete skillAnswers[id]; el.classList.remove('on'); el.querySelector('.st-check').textContent=''; }
+  else { skillAnswers[id]=pts; el.classList.add('on'); el.querySelector('.st-check').textContent='✓'; }
+}
+
+function toggleCertA(id, pts, el){
+  if(certAnswers[id]){ delete certAnswers[id]; el.classList.remove('on'); el.querySelector('.st-check').textContent=''; }
+  else { certAnswers[id]=pts; el.classList.add('on'); el.querySelector('.st-check').textContent='✓'; }
+}
+
+function selectCertAnswer(qid, idx, pts, el){
+  certAnswers[qid] = {idx, pts};
+  document.querySelectorAll(`[onclick*="selectCertAnswer('${qid}'"]`).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function nextQ(){
+  if(currentQ < TOTAL_STEPS - 1){
+    currentQ++;
+    updateProgress(currentQ);
+    renderQuestion(currentQ);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function prevQ(){
+  if(currentQ > 0){
+    currentQ--;
+    updateProgress(currentQ);
+    renderQuestion(currentQ);
+  } else {
+    document.getElementById('quizArea').classList.add('hidden');
+    document.getElementById('progressBar').classList.add('hidden');
+    document.getElementById('step0').classList.remove('hidden');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function getScore(obj){ return Object.values(obj).reduce((a,v)=>a+(typeof v==='object'?v.pts||0:v),0); }
+
+function calculateResults(){
+  const role = ROLES[selectedRole];
+  const eduScore = Math.min(30,
+    ((answers.edu_degree?.pts||0) + (answers.edu_uni?.pts||0) + (answers.edu_grade?.pts||0))
+  );
+  const techScore = Math.min(30, getScore(skillAnswers));
+  const expScore = Math.min(40,
+    ((answers.exp_months?.pts||0) + (answers.exp_org?.pts||0) + (answers.exp_lead?.pts||0) + (answers.exp_uae?.pts||0))
+  );
+  const portScore = Math.min(35,
+    ((answers.port_count?.pts||0) + (answers.port_uae?.pts||0) + (answers.port_live?.pts||0) + (answers.port_web?.pts||0))
+  );
+  const certScore = Math.min(30,
+    getScore(certAnswers)
+  );
+
+  const totalRaw = eduScore + techScore + expScore + portScore + certScore;
+  const totalMax = 30+30+40+35+30;
+  const score = Math.round((totalRaw/totalMax)*100);
+
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('progressBar').classList.add('hidden');
+  document.getElementById('resultsArea').classList.remove('hidden');
+
+  renderResults(score, role, eduScore, techScore, expScore, portScore, certScore);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function fmtN(n){return Math.round(n).toLocaleString('en-IN')}
+
+function renderResults(score, role, eduS, techS, expS, portS, certS){
+  const ra = document.getElementById('resultsArea');
+
+  const label = score>=80?'UAE Job-Ready':score>=65?'Nearly Job-Ready':score>=50?'Developing Profile':score>=35?'Early Stage':'Foundation Building';
+  const sub = score>=80?'Your profile is competitive for UAE '+role.name+' roles. Focus on targeted applications, personalised outreach and interview preparation now.':
+    score>=65?'You are close to UAE job-ready. Address the key gaps in your roadmap and you can realistically start applying within 4 to 8 weeks.':
+    score>=50?'You have a solid foundation but need to strengthen specific areas before UAE applications will gain traction. Follow your roadmap carefully.':
+    score>=35?'You are in the early stages of your UAE career profile. Consistent work on 2 to 3 key areas will move you into the ready range within 3 months.':
+    'Start with the fundamentals for your field. Your top 3 priorities are in the roadmap below.';
+
+  const ringColor = score>=80?'#22C55E':score>=65?'#C9A84C':score>=50?'#F59E0B':'#EF4444';
+  const circ = 565;
+  const offset = circ - (circ * score / 100);
+
+  const sal = role.salaries;
+  const multiply = score>=80?1.0:score>=65?0.92:score>=50?0.82:score>=35?0.70:0.60;
+  const conAED = Math.round(sal.con * multiply / 500) * 500;
+  const realAED = Math.round(sal.real * multiply / 500) * 500;
+  const refAED = Math.round(sal.ref * multiply / 500) * 500;
+
+  const breakdowns = [
+    {name:'Education and Academic Background',score:eduS,max:30,icon:'🎓',
+     feed:eduS>=24?'Strong educational foundation that UAE employers will respect.':eduS>=16?'Good educational background. Supplement with skills and portfolio to strengthen.':'Build technical skills and portfolio to compensate. UAE employers look at the whole profile.'},
+    {name:'Technical and Role-Specific Skills',score:techS,max:30,icon:'⚡',
+     feed:techS>=24?'Excellent technical skill set well matched to UAE '+role.name+' requirements.':techS>=16?'Good technical base. Focus on the highest-weighted skills in your field for maximum impact.':'Prioritise the top 3 skills in your field immediately. These appear in the majority of UAE job postings.'},
+    {name:'Work Experience and Track Record',score:expS,max:40,icon:'💼',
+     feed:expS>=32?'Strong experience profile. Government or MNC experience is highly valued in UAE hiring.':expS>=20?'Decent experience foundation. Focus on quality narratives over quantity of months.':'Limited experience is the most common barrier for UAE-targeting freshers. Volunteer work and internships count significantly. Government client experience is especially powerful.'},
+    {name:'Portfolio and Public Work Samples',score:portS,max:35,icon:'🗂️',
+     feed:portS>=28?'Outstanding portfolio. UAE-focused live projects are extremely rare and will differentiate you powerfully.':portS>=18?'Good portfolio. Add at least one UAE-focused project to show market commitment.':'Portfolio is critical compensation for limited experience. Build 2 to 3 UAE-relevant projects immediately and deploy them live.'},
+    {name:'Certifications and Achievements',score:certS,max:30,icon:'🏆',
+     feed:certS>=22?'Strong certification profile. Verified credentials are especially respected by UAE employers.':certS>=12?'Decent certifications. Adding one highly valued certification in your field would strengthen your profile significantly.':'Start with free certifications from IBM SkillsBuild and LinkedIn Learning as immediate wins while working on paid credentials.'},
+  ];
+
+  const companies = role.companies;
+
+  const roadmap = buildRoadmap(score, role, techS, portS, certS, expS);
+
+  ra.innerHTML = `
+    <div class="score-hero">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:6px 16px;font-size:13px;color:var(--t2);margin-bottom:20px">
+        <span>${role.icon}</span><span>${role.name}</span>
+      </div>
+      <div class="score-ring-outer">
+        <svg width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Readiness score ring showing ${score} out of 100">
+          <circle class="ring-bg" cx="100" cy="100" r="90"/>
+          <circle class="ring-glow" cx="100" cy="100" r="90" stroke="${ringColor}" id="ringGlow"/>
+          <circle class="ring-fill" cx="100" cy="100" r="90" stroke="${ringColor}" id="ringFill"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-num" id="scoreNum" style="color:${ringColor}">0</div>
+          <div class="score-label-sm">out of 100</div>
+        </div>
+      </div>
+      <div class="score-title">${label}</div>
+      <div class="score-subtitle">${sub}</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric m-gold"><div class="m-icon">🎓</div><div class="m-val">${eduS}/30</div><div class="m-label">Education</div></div>
+      <div class="metric m-blue"><div class="m-icon">⚡</div><div class="m-val">${techS}/30</div><div class="m-label">Skills</div></div>
+      <div class="metric m-green"><div class="m-icon">💼</div><div class="m-val">${expS}/40</div><div class="m-label">Experience</div></div>
+      <div class="metric m-purple"><div class="m-icon">🗂️</div><div class="m-val">${portS}/35</div><div class="m-label">Portfolio</div></div>
+      <div class="metric m-amber"><div class="m-icon">🏆</div><div class="m-val">${certS}/30</div><div class="m-label">Certifications</div></div>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <div class="breakdown-title" style="font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:14px">Detailed Score Breakdown</div>
+      ${breakdowns.map(b=>{
+        const pct=Math.round((b.score/b.max)*100);
+        const cls=pct>=75?'high':pct>=50?'mid':'low';
+        const col=pct>=75?'#22C55E':pct>=50?'#C9A84C':'#EF4444';
+        return `<div class="breakdown-card">
+          <div class="bd-header">
+            <div class="bd-name">${b.icon} ${b.name}</div>
+            <div class="bd-score ${cls}">${b.score}/${b.max} · ${pct}%</div>
+          </div>
+          <div class="bd-bar-track"><div class="bd-bar-fill" style="width:0%;background:${col}" data-target="${pct}"></div></div>
+          <div class="bd-feedback">${b.feed}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="salary-panel">
+      <div class="sp-title">Your Realistic UAE Salary Range (${role.name})</div>
+      <div class="sal-grid">
+        <div class="sal-box">
+          <div class="sal-tier con">Conservative</div>
+          <div class="sal-aed con">AED ${fmtN(conAED)}</div>
+          <div class="sal-inr">INR ${fmtN(conAED*AED_INR)}/month</div>
+        </div>
+        <div class="sal-box">
+          <div class="sal-tier real">Realistic Target</div>
+          <div class="sal-aed real">AED ${fmtN(realAED)}</div>
+          <div class="sal-inr">INR ${fmtN(realAED*AED_INR)}/month</div>
+        </div>
+        <div class="sal-box">
+          <div class="sal-tier ref">With Referral</div>
+          <div class="sal-aed ref">AED ${fmtN(refAED)}</div>
+          <div class="sal-inr">INR ${fmtN(refAED*AED_INR)}/month</div>
+        </div>
+      </div>
+      <div class="sal-note">Salary data sourced from Michael Page UAE Salary Guide 2026, Cooper Fitch UAE Salary Guide 2026, Hays GCC Salary Guide 2026 and PayScale UAE 2026. Ranges adjusted for your readiness score (${score}/100). An internal referral from an existing employee typically adds 15 to 20% to starting salary. UAE income tax is 0% so your gross salary is your take-home salary. Exchange rate: 1 AED = INR ${AED_INR} (XE.com June 2026).</div>
+    </div>
+
+    <div class="companies-panel">
+      <div class="panel-title">UAE Companies That Match Your Profile</div>
+      <div class="comp-grid">
+        ${companies.map(c=>`
+          <div class="comp-card">
+            <div class="comp-name">${c.name}</div>
+            <div class="comp-sector">${c.sector}</div>
+            <div class="comp-roles">${c.roles}</div>
+            <div class="comp-tag ${c.tc}">${c.tag}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="cp-title">Your Profile vs UAE Hiring Benchmarks</div>
+      <div class="cp-sub">Where your score sits against typical UAE hiring thresholds by role level</div>
+      <div style="position:relative;height:220px">
+        <canvas id="benchChart" role="img" aria-label="Bar chart comparing your score vs UAE hiring benchmarks">Score vs benchmarks.</canvas>
+      </div>
+    </div>
+
+    <div class="roadmap-panel">
+      <div class="panel-title">Your Personalised Action Roadmap</div>
+      ${roadmap.map((r,i)=>`
+        <div class="roadmap-item">
+          <div class="ri-num">${i+1}</div>
+          <div class="ri-body">
+            <div class="ri-action">${r.action}</div>
+            <div class="ri-detail">${r.detail}</div>
+            <div class="ri-time">⏱ ${r.time}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="share-panel">
+      <div class="score-share-text">${score}/100 · ${label}</div>
+      <div class="score-share-sub">${role.icon} ${role.name} in UAE</div>
+      <div class="share-title">Share this tool and help others assess their UAE readiness</div>
+      <div class="share-sub">Thousands of professionals globally are targeting UAE careers. Share this free tool so they can check their readiness too.</div>
+      <div class="share-btns">
+        <button class="sbtn sbtn-gold" onclick="retake()">Retake Assessment</button>
+        <button class="sbtn sbtn-li" onclick="shareLinkedIn(${score},'${role.name}')">Share on LinkedIn</button>
+        <button class="sbtn sbtn-outline" onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Data sources and methodology:</strong> Skill weightings based on frequency analysis of UAE job postings across Indeed UAE, Bayt.com and GulfTalent June 2026. Salary ranges from Michael Page UAE Salary Guide 2026, Cooper Fitch UAE Salary Guide 2026, Hays GCC Salary Guide 2026, PayScale UAE 2026 and UAE Expert Hub salary benchmark data. Exchange rate 1 AED = INR 26.04 confirmed via XE.com June 8 2026. All results are indicative and should be used for planning and guidance purposes only.
+    </div>`;
+
+  setTimeout(()=>{
+    const fills = document.querySelectorAll('.bd-bar-fill');
+    fills.forEach(f=>{ f.style.width = f.dataset.target+'%'; f.style.transition='width 1.5s cubic-bezier(0.4,0,0.2,1)'; });
+    const ringFill = document.getElementById('ringFill');
+    const ringGlow = document.getElementById('ringGlow');
+    const offset = 565 - (565*score/100);
+    if(ringFill){ ringFill.style.strokeDashoffset = offset; }
+    if(ringGlow){ ringGlow.style.strokeDashoffset = offset; }
+    let cur=0;
+    const timer=setInterval(()=>{ cur=Math.min(cur+2,score); document.getElementById('scoreNum').textContent=cur; if(cur>=score)clearInterval(timer); },18);
+
+    const GRD='rgba(128,128,160,0.08)';
+    new Chart(document.getElementById('benchChart'),{
+      type:'bar',
+      data:{
+        labels:['Your Score','Entry Level Min','Junior Role Min','Mid-Level Min','Senior Role Min'],
+        datasets:[{
+          data:[score,35,50,65,80],
+          backgroundColor:[
+            score>=65?'#22C55E':score>=50?'#C9A84C':score>=35?'#F59E0B':'#EF4444',
+            '#1C1D30','#1C1D30','#1C1D30','#1C1D30'
+          ],
+          borderRadius:6,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{color:GRD},ticks:{color:'#64748B',font:{size:11}}},
+          y:{grid:{color:GRD},min:0,max:100,ticks:{color:'#64748B',callback:v=>v+'/100'}}
+        }
+      }
+    });
+  },400);
+}
+
+function buildRoadmap(score, role, techS, portS, certS, expS){
+  const items = [];
+  if(techS < 20) items.push({action:'Build your core technical skills for '+role.name,detail:'Focus on the top 3 skills in your field first as these appear in the highest percentage of UAE job postings. Use free resources: YouTube, Google, IBM SkillsBuild, Microsoft Learn.',time:'4 to 8 weeks'});
+  if(portS < 20) items.push({action:'Build UAE-focused portfolio projects',detail:'UAE employers value UAE market knowledge. Use official UAE government open data from data.gov.ae to build projects relevant to your field. Aim for 2 to 3 strong projects minimum.',time:'4 to 6 weeks per project'});
+  if(expS < 20) items.push({action:'Build professional experience through volunteering and internships',detail:'Volunteer for industry bodies, take on freelance projects or contribute to open source work. Government client experience is especially powerful for UAE applications.',time:'Start immediately, ongoing'});
+  if(certS < 15) items.push({action:'Complete high-value certifications for your field',detail:'IBM SkillsBuild, Google, Microsoft and LinkedIn Learning certificates are free or low cost and immediately strengthen your profile. Focus on the top-weighted certification for your career track.',time:'1 to 3 weeks each'});
+  items.push({action:'Activate your UAE professional network',detail:'One internal referral is worth 200 online applications. Connect with alumni from your university who are working in UAE on LinkedIn. Reach out to professionals in your target companies. DCU and other European university alumni are especially active in UAE.',time:'Start today, ongoing'});
+  items.push({action:'Deploy everything publicly and make it easy to find',detail:'Make all your projects and work samples accessible via public URLs. Recruiters want to click a link and see your work in 30 seconds. Update your LinkedIn, GitHub and portfolio website to reflect your best work.',time:'1 to 2 days'});
+  if(!answers.exp_uae || answers.exp_uae.pts < 4) items.push({action:'Build UAE and GCC market knowledge',detail:'Read UAE Central Bank reports, Dubai Land Department data, IDA UAE and Gulf Business Magazine. Understand the We the UAE 2031 and how it affects your industry. Employers notice candidates who understand the local market.',time:'1 to 2 hours per week'});
+  items.push({action:'Start applying strategically not broadly',detail:'Apply to private sector companies first as Emiratization rules affect government and semi-government roles. Use GulfTalent, LinkedIn with Entry Level filter and direct company career pages. Apply to 5 well-matched roles per day rather than 50 generic applications.',time:'Start after completing roadmap steps above'});
+  return items.slice(0,6);
+}
+
+function retake(){
+  selectedRole=null;
+  currentQ=0;
+  answers={};
+  skillAnswers={};
+  certAnswers={};
+  document.getElementById('resultsArea').classList.add('hidden');
+  document.getElementById('progressBar').classList.add('hidden');
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('step0').classList.remove('hidden');
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  const btn=document.getElementById('roleNextBtn');
+  btn.disabled=true; btn.style.opacity='0.5'; btn.style.cursor='not-allowed';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied! Share it with anyone targeting UAE careers.'));
+}
+
+function shareLinkedIn(score,roleName){
+  const url=encodeURIComponent(window.location.href);
+  const text=encodeURIComponent('I just checked my UAE Career Readiness Score: '+score+'/100 for '+roleName+'. Check yours free at this tool built by Srikanth Dhamodharan. Takes 5 minutes and gives you your real AED salary range and personalised roadmap.');
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url='+url,'_blank');
+}
+</script>
+</body>
+</html>
